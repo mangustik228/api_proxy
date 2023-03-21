@@ -29,4 +29,6 @@ async def post_proxy(request: schema.proxy.ProxyPost= Body(),
     if request.token != config.token: 
         return HTTPException(status_code=401, detail="your token - is bullshit")
     stmt = insert(models.Proxy).values(request.data.dict())
+    await session.execute(stmt) 
+    await session.commit() 
     return {'status': 'success'}

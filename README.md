@@ -76,7 +76,7 @@
     ```
 
 1. Использование асинхронного движка  
-    Необходимо изменить sqlalchemy.url там где он встречаеться:
+    Необходимо изменить sqlalchemy.url там от куда он подсасываеться для create_engine()... В нашем случае `config/config.ini`:
     ```bash
     sqlite+driver:///database/sqlite.db?async_fallback=True
     ```
