@@ -1,5 +1,8 @@
 # Proxy-api
+
 Мини-приложение для хранения, получения проплаченных прокси
+
+---
 
 ## База данных
 
@@ -13,8 +16,9 @@
 - `expire` До какого числа действует прокси 
 - `service` Ссылка на сервис, на котором покупались прокси
 
+--- 
 
-### Миграции (Памятка для себя)
+### Миграции 
 1. Инициализируем `alembic
 
     ```bash
@@ -27,9 +31,10 @@
     ```
     на  
     ```python
-    sqlalchemy.url = sqlite:///database/sqlite.db
+    sqlalchemy.url = sqlite:///./database/db.sqlite
     ```
-
+    если использовать `sqlite:////...` - будет абсолютный путь
+    
 1. Если используем mysql/postgresql:  
     ```python
     sqlalchemy.url = mysql://%(DB_USER)s:%(DB_USER)s@%(DB_HOST)s/%(DB_NAME)s
@@ -76,12 +81,21 @@
     ```
 
 1. Использование асинхронного движка  
+   
     Необходимо изменить sqlalchemy.url там от куда он подсасываеться для create_engine()... В нашем случае `config/config.ini`:
     ```bash
-    sqlite+driver:///database/sqlite.db?async_fallback=True
+    sqlite+driver:///database/db.sqlite
     ```
-- `+driver` - драйвер гуглиться, какой хочеться поставить и ставиться через `pip`. Например для sqlite3 `aiosqlite`
-- `?async_fallback=True` дописываем, потому что `alembic` не предназначен для асинхронки
+    `+driver` - драйвер гуглиться, какой хочеться поставить и ставиться через `pip`. Например для sqlite3 `aiosqlite`  
+  
+    **Примечение:**  
+    - Если мы не ставим драйвер рекомендуемый синхронным SQLAlchemy, то на пример postgresql в файле `alembic.ini` надо поставить указать: 
+        ```bash 
+        postgresql+driver:/......?async_fallback=True
+        ```
+    - Здесь `?async_fallback=True` дописываем, потому что `alembic` не предназначен для асинхронки(только в config.ini, если мы снесли драйвер родной.)
+
+---
 
 
 ## .env 
