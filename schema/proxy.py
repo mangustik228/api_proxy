@@ -1,3 +1,4 @@
+import json
 from pydantic import BaseModel, validator
 import re
 from typing import Optional, Literal
@@ -28,8 +29,36 @@ class ProxyPost(TokenCheck):
 
 class ProxyGet(TokenCheck):
     expire: date = (date.today() + timedelta(days=1))
-    active: bool = True
-    type: Literal['string', 'dict[str,str]', 'dict[str,list]'] = 'string'
+    type: Literal['string', 'dict[str,str]', 'playwright'] = 'string'
 
 
+class ProxyGetResponse(BaseModel):
+    password: str 
+    server: str 
+    username: str 
+    port: int 
 
+    class Config:
+        orm_mode = True
+
+    def string_val(self):
+        return {
+            'http':f'http://{self.username}:{self.password}@{self.server}:{self.port}',
+            'https':f'https://{self.username}:{self.password}@{self.server}:{self.port}',
+            }
+    
+    def dict_str_str(self):
+        return { 
+            'server':f'http://{self.server}:{self.port}',
+            'username':f'{self.username}',
+            'password':f'{self.password}'
+        }
+
+    def dict_playwright(self):
+        return {
+            "proxy": {
+                'server':f'http://{self.server}:{self.port}',
+                'username':f'{self.username}',
+                'password':f'{self.password}'
+            }
+        }   
