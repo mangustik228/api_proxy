@@ -85,6 +85,7 @@ async def post_proxies(request: schema.proxy.ProxyPost= Body(),
 @router.delete('/')
 async def delete_proxy(token: int, id:int , session=Depends(get_async_session)):
     '''Удалить прокси по id'''
+    logger.info(f'Запрос на удаление прокси {id}')
     utils.check_token(token)
     result = await crud.delete_proxy(session, id)
     return {'status':result}
@@ -99,6 +100,7 @@ async def update_proxy(token: int,
     
     Информация прикладывать json в тело запроса
     '''
+    logger.info(f'Запрос на обновление прокси {request.id}')
     utils.check_token(token)
     result = await crud.update_proxy(session, request)
     return {'status':result}

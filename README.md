@@ -104,6 +104,52 @@
 token=000000000
 ```
 
+---
+
+## Деплой
+
+### Nginx
+Создаем конфигурационный файл для приложения:
+```bash
+sudo nano /etc/nginx/sites-available/app_proxy
+```
+
+Добавляем в `app_proxy` следующее
+
+```bash 
+server {
+    listen 80;
+    server_name subdomen.example.com;
+
+    location / {
+        proxy_pass http://localhost:8033;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+``` 
+
+Создаем символическую ссылку:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/app_proxy /etc/nginx/sites-enabled/
+```
+
+Проверяем на ошибки:
+
+```bash
+sudo nginx -t
+```
+
+Перезапускаем nginx: 
+```
+sudo systemctl restart nginx
+```
+
+### Запуск приложения 
+```bash
+gunicorn app:app -w 1 -k uvicorn.workers.UvicornWorker -b :8033 --pythonpath /path/to/your/virtualenv/bin/python
+```
 
 ---
 p.s. можно было написать одним файлом, без асинхронки и кучи всего.  
@@ -115,4 +161,6 @@ created: 2023-03-21 00:15
 author: Vasiliy_mangust228  
 email: <a href="mailto:bacek.mangust@gmail.com">bacek.mangust@gmail.com</a>  
 tg: https://t.me/mangusik228  
+
+
             
