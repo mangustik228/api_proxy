@@ -24,7 +24,7 @@ class ProxyBd(BaseModel):
         
    
 class ProxyPost(TokenCheck):
-    data: ProxyBd
+    data: list[ProxyBd]
 
 
 class ProxyGet(TokenCheck):
