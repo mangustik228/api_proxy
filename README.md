@@ -122,7 +122,7 @@ server {
     server_name subdomen.example.com;
 
     location / {
-        proxy_pass http://localhost:8033;
+        proxy_pass http://127.0.0.1:8033;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -147,9 +147,55 @@ sudo systemctl restart nginx
 ```
 
 ### Запуск приложения 
+
+Сначала выполняем пункт по миграциям!
+
 ```bash
 gunicorn app:app -w 1 -k uvicorn.workers.UvicornWorker -b :8033 --pythonpath /path/to/your/virtualenv/bin/python
 ```
+
+создаем файл с приложением:
+
+```bash 
+sudo nano /etc/systemd/system/app_proxy.service
+```
+
+Прописываем:  
+
+```bash 
+[Unit]
+Description=Binance unicorn server
+
+[Service]
+User=your_user 
+WorkingDirectory=/path/to/your/app
+Environment=token=your_token
+ExecStart=/path/to/your/interpretator/venv/bin/gunicorn app:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8033        
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=app_proxy
+
+[Install]
+WantedBy=multi-user.target
+```
+**Примечание**  
+-w 1 - Кол-во воркеров. Т.к. буду пользоваться 1, от силы еще коллега: то прописываю 1.   
+--bind 0.0.0.0:8033 порт можно указать другой, даже иногда нужно, если уже занят  
+  
+
+Перезапускаем демона: 
+```bash 
+sudo systemctl daemon-reload
+sudo systemctl start app_proxy.service
+sudo systemctl enable app_proxy.service
+```
+
+Проверяем
+```bash 
+sudo systemctl status app_proxy.service
+```
+
 
 ---
 p.s. можно было написать одним файлом, без асинхронки и кучи всего.  
