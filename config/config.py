@@ -2,6 +2,9 @@ from dotenv import load_dotenv
 import os 
 from dataclasses import dataclass
 from configparser import ConfigParser
+from loguru import logger 
+
+logger.add('logs/log.log', level='INFO', rotation='5MB')
 
 _config = ConfigParser()
 _config.read('config/config.ini')
