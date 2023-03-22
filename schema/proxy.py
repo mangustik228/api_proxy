@@ -62,3 +62,16 @@ class ProxyGetResponse(BaseModel):
                 'password':f'{self.password}'
             }
         }   
+
+
+class ProxyUpdate(ProxyBd):
+    id: int 
+    server: Optional[str]
+    port: Optional[int]
+    username: Optional[str]
+    password: Optional[str]
+    expire: Optional[date | datetime] 
+    service: Optional[str]
+
+
+    

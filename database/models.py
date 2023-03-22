@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
 
@@ -18,3 +18,11 @@ class Proxy(Base):
     port = Column(Integer)
     expire = Column(DateTime)
     service = Column(String, nullable=True)
+
+    __table_args__ = (UniqueConstraint(
+        'username', 
+        'password',
+        'port',
+        'server',
+        'expire', 
+        name='unique_value'),)
